@@ -20,11 +20,17 @@
     transform: translate(-50%, -50%);
 }
 
+html
+{
+    height: 100%;
+}
+
 body
 {
     background-color: var(--background-color);
     font-family: 'Open Sans';
     color: var(--text-color);
+    min-height: 100%;
 }
 
 a, a:visited
