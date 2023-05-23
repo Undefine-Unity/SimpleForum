@@ -45,6 +45,12 @@ a, a:visited
     border: 0 !important;
 }
 
+.form-check-input:checked
+{
+    background-color: var(--accent-color);
+    border: 0;
+}
+
 .btn-primary
 {
     background-color: var(--accent-color) !important;

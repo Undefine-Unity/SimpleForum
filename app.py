@@ -100,6 +100,9 @@ def api_register():
     if len(request.form['username']) < 3 or len(request.form['username']) > 16:
         return redirect(url_for('register', error='Username does not meet the requirements', username_old=request.form['username'], email_old=request.form['email']))
 
+    if 'tos' not in request.form.keys() or request.form['tos'] == False:
+        return redirect(url_for('register', error='Accept the terms of service', username_old=request.form['username'], email_old=request.form['email']))
+
     if database.execute('select * from accounts where username=?', [request.form['username'].lower()]).fetchone() is not None:
         return redirect(url_for('register', error='Username already taken', username_old=request.form['username'], email_old=request.form['email']))
 
