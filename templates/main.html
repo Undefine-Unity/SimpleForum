@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Main</title>
 
         <!-- Dependencies -->
@@ -56,22 +57,26 @@
         </div>
 
         <div id="content">
-            <div class="post p-4">
-                <form action="/api/new_post" class="mb-1" id="new_post">
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Title:</label>
-                        <input type="text" class="form-control" id="title" name="title"/>
-                    </div>
-                    <div class="mb-3">
-                        <label for="content" class="form-label">Content:</label> 
-                        <textarea form="new_post" class="form-control" id="content" name="content" rows=10></textarea>
-                    </div>
-                </form>
-            </div>
+            {% if username != '' %}
+                <div class="post p-4">
+                    <form action="/api/new_post" method='post' class="mb-1" id="new_post">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title:</label>
+                            <input type="text" class="form-control" id="title" name="title" minlength="1"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="content" class="form-label">Content:</label> 
+                            <textarea form="new_post" class="form-control" id="content" name="content" rows=10 style="resize: none; "></textarea>
+                        </div>
+                        
+                        <input type="submit" value="Post" class="btn btn-primary mt-2 mb-1 w-25"/>
+                    </form>
+                </div>
+            {% endif %}
             {% for post in posts %}
             <div class="post p-4">
-                <h3>{{ post.1 }}</h3>
-                {{ post.2 }}
+                <h3>{{ post.2 }}</h3>
+                {{ post.3 }}
             </div>
             {% endfor %}
         </div>

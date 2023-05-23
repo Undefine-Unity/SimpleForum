@@ -3,6 +3,7 @@ from flask import *
 import datetime
 import json
 import random
+import requests
 import string
 import sqlite3
 
@@ -12,6 +13,8 @@ app.config['SECRET_KEY'] = '4kr/:/S>tEayrQu2(5waOW{A>]H56='
 database = sqlite3.connect('database.db', check_same_thread=False)
 
 active_tokens = {}
+
+recaptcha_secret = ''
 
 def generate_random_token():
     token = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32))
@@ -85,6 +88,8 @@ def api_login():
 
 @app.route('/api/register', methods=['POST'])
 def api_register():
+    assert recaptcha_secret != ''
+
     # FIXME: Do these in JavaScript on the frontend
     if len(request.form['password']) < 3 or len(request.form['password']) > 16:
         return redirect(url_for('register', error='Password does not meet the requirements', username_old=request.form['username'], email_old=request.form['email']))
@@ -100,11 +105,32 @@ def api_register():
 
     if database.execute('select * from accounts where email=?', [request.form['email'].lower()]).fetchone() is not None:
         return redirect(url_for('register', error='Email already registered', username_old=request.form['username'], email_old=request.form['email']))
+
+    r = requests.get('https://www.google.com/recaptcha/api/siteverify', params={
+        'secret': recaptcha_secret,
+        'response': request.form['g-recaptcha-response']
+    })
+    if r.status_code != 200 or not r.json()['success']:
+        return redirect(url_for('register', error='Verify you are not a robot', username_old=request.form['username'], email_old=request.form['email']))
     
     database.execute('insert into accounts (username, password, email) values (?, ?, ?)', [request.form['username'], request.form['password'], request.form['email']])
     database.commit()
 
     return login(request.form['username'], request.form['password'])
 
+@app.route('/api/new_post', methods=['POST'])
+def api_new_post():
+    # Check if token is still valid
+    if 'token' in request.cookies.keys() and not request.cookies['token'] in active_tokens:
+        return logout(request.cookies['token'])
+    
+    author_id = active_tokens[request.cookies['token']]
+    database.execute('insert into posts (author_id, title, content) values (?, ?, ?)', [author_id, request.form['title'], request.form['content']])
+    database.commit()
+
+    return redirect('/')
+
 if __name__ == '__main__':
+    with open('captcha_secret') as f:
+        recaptcha_secret = f.readline()
     app.run(debug=True)
