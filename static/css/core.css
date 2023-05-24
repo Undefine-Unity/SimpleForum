@@ -65,7 +65,7 @@ a, a:visited
 .btn-primary
 {
     background-color: var(--accent-color) !important;
-    border: 0 !important;
+    border-width: 0;
 }
 
 .btn-primary:hover
@@ -76,6 +76,12 @@ a, a:visited
 .btn-primary:active, .btn-primary:visited
 {
     background-color: var(--accent-color-pressed) !important;
+}
+
+.btn-primary-fixed-size
+{
+    border-color: var(--accent-color) !important;
+    border-width: 2px !important;
 }
 
 .btn-secondary
