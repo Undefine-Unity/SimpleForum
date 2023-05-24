@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
 
 :root
 {
@@ -28,7 +28,7 @@ html
 body
 {
     background-color: var(--background-color);
-    font-family: 'Open Sans';
+    font-family: "Open Sans";
     color: var(--text-color);
     min-height: 100%;
 }
@@ -36,7 +36,7 @@ body
 a, a:visited
 {
     text-decoration: none;
-    color: var(--link-color)
+    color: var(--link-color);
 }
 
 .hidden-link, .hidden-link:visited
@@ -76,4 +76,21 @@ a, a:visited
 .btn-primary:active, .btn-primary:visited
 {
     background-color: var(--accent-color-pressed) !important;
+}
+
+.btn-secondary
+{
+    background-color: var(--content-color) !important;
+    border-color: var(--accent-color) !important;
+    border-width: 2px;
+}
+
+.btn-secondary:hover, .btn-secondary:active, .btn-secondary:visited
+{
+    background-color: var(--element-color) !important;
+}
+
+.navbar-dark
+{
+    background-color: var(--content-color) !important;
 }
