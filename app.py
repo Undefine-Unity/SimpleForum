@@ -1,5 +1,6 @@
 from flask import *
 
+from dataclasses import dataclass
 import datetime
 import json
 import random
@@ -50,6 +51,12 @@ def logout(token: str) -> Response:
     resp.set_cookie('token', '', expires=0)
     return resp
 
+@dataclass
+class DisplayPostInfo:
+    title: str
+    content: str
+    author: str
+
 @app.route('/')
 def main():
     # Check if token is still valid
@@ -57,12 +64,17 @@ def main():
         return logout(request.cookies['token'])
     
     posts = database.execute('select * from posts').fetchall()
+    postInfos = []
+    for post in posts:
+        id, author_id, title, content = post
+        author = database.execute('select username from accounts where id=?', [author_id]).fetchone()[0]
+        postInfos.append(DisplayPostInfo(title, content, author))
     
     username = ''
     if 'token' in request.cookies.keys():
         username = database.execute('select username from accounts where id=?', [active_tokens[request.cookies['token']]]).fetchone()[0]
         
-    return render_template('main.html', posts=posts, username=username)
+    return render_template('main.html', posts=postInfos, username=username)
 
 @app.route('/login')
 def login_endpoint():
