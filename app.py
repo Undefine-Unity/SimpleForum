@@ -24,18 +24,18 @@ def generate_random_token():
 
     return token
 
-def login(username: str, password: str) -> Response:
-    accountTuple = database.execute('select * from accounts where upper(username)=upper(?)', [username]).fetchone()
+def login(username_in: str, password_in: str) -> Response:
+    accountTuple = database.execute('select * from accounts where upper(username)=upper(?)', [username_in]).fetchone()
     if accountTuple is None:
-        return redirect(url_for('login', error='Account not found'))
+        return redirect(url_for('login_endpoint', error='Account not found'))
 
     id, username, password, email = accountTuple
 
-    if password != password:
-        return redirect(url_for('login', error='Invalid password'))
+    if password_in != password:
+        return redirect(url_for('login_endpoint', error='Invalid password'))
         
     if id in active_tokens.values():
-        return redirect(url_for('login', error='User already logged in'))
+        return redirect(url_for('login_endpoint', error='User already logged in'))
         
     token = generate_random_token()
     active_tokens[token] = id
