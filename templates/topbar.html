@@ -1,0 +1,13 @@
+<div id="navbar" class="sticky-top">
+    <div class="float-start d-flex align-items-center">
+        <h2><a href="/" class="p-0 hidden-link">forum logo goes here</a></h2>
+    </div>
+    <div class="float-end d-flex align-items-center fs-5">
+        {% if username == '' %}
+            <a href="/login" class="btn btn-primary hidden-link">Login</a>
+        {% else %}
+            <b class="d-inline">{{ username }}</b>
+            <a href="/logout" class="btn btn-primary hidden-link">Log out</a>
+        {% endif %}
+    </div>
+</div>

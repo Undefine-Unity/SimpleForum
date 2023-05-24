@@ -67,20 +67,8 @@
     </head>
 
     <body class="m-0" onload="setup_bootstrap_events()">
-        <div id="navbar" class="sticky-top">
-            <div class="float-start d-flex align-items-center">
-                <h2>forum logo goes here</h1>
-            </div>
-            <div class="float-end d-flex align-items-center fs-5">
-                {% if username == '' %}
-                    <a href="login">Login</a><br/>
-                {% else %}
-                    <b class="d-inline">{{ username }}</b>
-                    <a class="d-inline" href="/logout">Log out</a>
-                {% endif %}
-            </div>
-        </div>
-
+        {% include "topbar.html" %}
+        
         <div id="content">
             <div class="container">
                 {% if username != '' %}

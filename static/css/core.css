@@ -39,6 +39,11 @@ a, a:visited
     color: var(--link-color)
 }
 
+.hidden-link, .hidden-link:visited
+{
+    color: var(--text-color) !important;
+}
+
 .form-label
 {
     font-weight: bold;
