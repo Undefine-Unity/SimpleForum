@@ -76,6 +76,10 @@ def main():
         
     return render_template('main.html', posts=postInfos, username=username)
 
+@app.route('/tos')
+def tos():
+    return 'TOS might go here'
+
 @app.route('/login')
 def login_endpoint():
     if 'token' in request.cookies.keys():
@@ -88,7 +92,8 @@ def register():
         return redirect('/')
     return render_template('register.html', error=request.args['error'] if 'error' in request.args.keys() else '',
                                             username_old=request.args['username_old'] if 'username_old' in request.args.keys() else '',
-                                            email_old=request.args['email_old'] if 'email_old' in request.args.keys() else '')
+                                            email_old=request.args['email_old'] if 'email_old' in request.args.keys() else '',
+                                            tos_old=request.args['tos_old'] if 'tos_old' in request.args.keys() else '')
 
 @app.route('/logout')
 def logout_endpoint():
@@ -104,22 +109,22 @@ def api_register():
 
     # FIXME: Do these in JavaScript on the frontend
     if len(request.form['password']) < 3 or len(request.form['password']) > 16:
-        return redirect(url_for('register', error='Password does not meet the requirements', username_old=request.form['username'], email_old=request.form['email']))
+        return redirect(url_for('register', error='Password does not meet the requirements', username_old=request.form['username'], email_old=request.form['email'], tos_old=request.form['tos']))
 
     if request.form['password'] != request.form['password_confirm']:
-        return redirect(url_for('register', error='Passwords do not match', username_old=request.form['username'], email_old=request.form['email']))
+        return redirect(url_for('register', error='Passwords do not match', username_old=request.form['username'], email_old=request.form['email'], tos_old=request.form['tos']))
 
     if len(request.form['username']) < 3 or len(request.form['username']) > 16:
-        return redirect(url_for('register', error='Username does not meet the requirements', username_old=request.form['username'], email_old=request.form['email']))
+        return redirect(url_for('register', error='Username does not meet the requirements', username_old=request.form['username'], email_old=request.form['email'], tos_old=request.form['tos']))
 
     if 'tos' not in request.form.keys() or request.form['tos'] == False:
-        return redirect(url_for('register', error='Accept the terms of service', username_old=request.form['username'], email_old=request.form['email']))
+        return redirect(url_for('register', error='Accept the terms of service', username_old=request.form['username'], email_old=request.form['email'], tos_old=request.form['tos']))
 
     if database.execute('select * from accounts where username=?', [request.form['username'].lower()]).fetchone() is not None:
-        return redirect(url_for('register', error='Username already taken', username_old=request.form['username'], email_old=request.form['email']))
+        return redirect(url_for('register', error='Username already taken', username_old=request.form['username'], email_old=request.form['email'], tos_old=request.form['tos']))
 
     if database.execute('select * from accounts where email=?', [request.form['email'].lower()]).fetchone() is not None:
-        return redirect(url_for('register', error='Email already registered', username_old=request.form['username'], email_old=request.form['email']))
+        return redirect(url_for('register', error='Email already registered', username_old=request.form['username'], email_old=request.form['email'], tos_old=request.form['tos']))
 
     r = requests.get('https://www.google.com/recaptcha/api/siteverify', params={
         'secret': recaptcha_secret,

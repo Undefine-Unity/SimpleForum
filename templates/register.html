@@ -51,8 +51,8 @@
                     <input type="password" class="form-control" id="password_confirm" name="password_confirm"/>
                 </div>
                 <div class="mb-3">
-                    <input type="checkbox" class="form-check-input" id="tos" name="tos"/>
-                    <label for="tos" class="form-check-label">I accept the <a href="#">terms of service</a></label>
+                    <input type="checkbox" class="form-check-input" id="tos" name="tos" {% if tos_old == 'on' %} checked {% endif %}/>
+                    <label for="tos" class="form-check-label">I accept the <a href="/tos">terms of service</a></label>
                 </div>
                 <div class="mb-3">
                     <div class="g-recaptcha" data-sitekey="6LcUbjMmAAAAAMmSD5D94eC1AdtIHhv9x5qwFtga" data-theme="dark"></div>
