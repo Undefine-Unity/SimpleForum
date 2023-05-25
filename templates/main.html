@@ -108,16 +108,16 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form>
+                        <form action="/api/change_profile_picture" method="post" enctype="multipart/form-data" class="mb-1" id="changeProfilePictureForm">
                             <div class="mb-3">
                                 <label for="profilePictureUpload" class="form-label">Choose new profile picture</label>
-                                <input class="form-control" type="file" accept="image/png, image/gif, image/jpeg" id="profilePictureUpload">
+                                <input class="form-control" type="file" accept="image/png, image/gif, image/jpeg, image/webp" id="profilePictureUpload" name="profile_picture">
                             </div>                              
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary btn-primary-fixed-size">Save</button>
+                        <input type="submit" class="btn btn-primary btn-primary-fixed-size" value="Save" form="changeProfilePictureForm" data-bs-dismiss="modal"/>
                     </div>
                 </div>
             </div>
@@ -125,7 +125,6 @@
           
 
         <div id="content">
-              
             <div class="container">
                 {% if username != '' %}
                     <div class="post p-4 row">
@@ -154,7 +153,7 @@
                 {% for post in posts %}
                     <div class="post p-4 row">
                         <div class="post_profile_picture col-md-auto border-end pe-4">
-                            <img src="https://lh3.googleusercontent.com/a/AGNmyxZhDV9V4bv-3eNIhO7HsnZCAsY6aX4lcaTDXzJh=s83-c-mo" class="pb-2"/>
+                            <img width=83 height=91 src="{{ post.author_profile_picture }}" class="pb-2"/>
                             <br/>
                             <span class="text-center d-block w-100 fw-bold">{{ post.author }}</span>
                         </div>

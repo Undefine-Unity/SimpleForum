@@ -1,8 +1,10 @@
 from flask import *
+from werkzeug.utils import secure_filename
 
 from dataclasses import dataclass
 import datetime
 import json
+import os
 import random
 import requests
 import string
@@ -13,9 +15,11 @@ app.config['SECRET_KEY'] = '4kr/:/S>tEayrQu2(5waOW{A>]H56='
 
 database = sqlite3.connect('database.db', check_same_thread=False)
 
-active_tokens = {}
+active_tokens: dict[str, int] = {}
 
 recaptcha_secret = ''
+
+PROFILE_PICTURE_DIRECTORY = 'static/storage/profilePictures'
 
 def generate_random_token():
     token = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32))
@@ -29,7 +33,7 @@ def login(username_in: str, password_in: str) -> Response:
     if accountTuple is None:
         return redirect(url_for('login_endpoint', error='Account not found'))
 
-    id, username, password, email = accountTuple
+    id, username, password, email, profile_picture = accountTuple
 
     if password_in != password:
         return redirect(url_for('login_endpoint', error='Invalid password'))
@@ -56,6 +60,7 @@ class DisplayPostInfo:
     title: str
     content: str
     author: str
+    author_profile_picture: str
 
 @app.route('/')
 def main():
@@ -67,14 +72,15 @@ def main():
     postInfos = []
     for post in posts:
         id, author_id, title, content = post
-        author = database.execute('select username from accounts where id=?', [author_id]).fetchone()[0]
-        postInfos.append(DisplayPostInfo(title, content, author))
+        author_username, author_profile_picture = database.execute('select username, profile_picture from accounts where id=?', [author_id]).fetchone()
+        postInfos.append(DisplayPostInfo(title, content, author_username, author_profile_picture if author_profile_picture != None else 'static/img/no_profile_picture.jpg'))
     
     username = ''
+    profile_picture = ''
     if 'token' in request.cookies.keys():
-        username = database.execute('select username from accounts where id=?', [active_tokens[request.cookies['token']]]).fetchone()[0]
+        username, profile_picture = database.execute('select username, profile_picture from accounts where id=?', [active_tokens[request.cookies['token']]]).fetchone()
         
-    return render_template('main.html', posts=postInfos, username=username)
+    return render_template('main.html', posts=postInfos, username=username, profile_picture=profile_picture)
 
 @app.route('/tos')
 def tos():
@@ -137,6 +143,17 @@ def api_register():
     database.commit()
 
     return login(request.form['username'], request.form['password'])
+
+@app.route('/api/change_profile_picture', methods=['POST'])
+def api_change_profile_picture():
+    uploadedImage = request.files['profile_picture']
+    imageFilename = os.path.join(PROFILE_PICTURE_DIRECTORY, secure_filename(uploadedImage.filename))
+    uploadedImage.save(imageFilename)
+
+    database.execute('update accounts set profile_picture = ? where id=?', [imageFilename, active_tokens[request.cookies['token']]])
+    database.commit()
+
+    return redirect('/')
 
 @app.route('/api/new_post', methods=['POST'])
 def api_new_post():
