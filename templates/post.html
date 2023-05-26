@@ -12,9 +12,26 @@
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
         <link href="{{ url_for('static', filename='css/core.css') }}" rel="stylesheet"/>
+        <link href="{{ url_for('static', filename='css/post.css') }}" rel="stylesheet"/>
     </head>
 
     <body class="m-0">
         {% include "topbar.html" %}
+
+        <div id="content">
+            <div class="container">
+                <div class="post p-4 row">
+                    <div class="post_profile_picture col-md-auto border-end pe-4">
+                        <img width=83 height=91 src="{{ post.author_profile_picture }}" class="pb-2 rounded-circle"/>
+                        <br/>
+                        <span class="text-center d-block w-100 fw-bold">{{ post.author }}</span>
+                    </div>
+                    <div class="post_content col ps-4">
+                        <h3>{{ post.title }}</h3>
+                        {{ post.content }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

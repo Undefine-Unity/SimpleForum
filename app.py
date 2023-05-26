@@ -58,6 +58,7 @@ def logout(token: str) -> Response:
 
 @dataclass
 class DisplayPostInfo:
+    id: int
     title: str
     content: str
     author: str
@@ -74,7 +75,7 @@ def main():
     for post in posts:
         id, author_id, title, content = post
         author_username, author_profile_picture = database.execute('select username, profile_picture from accounts where id=?', [author_id]).fetchone()
-        postInfos.append(DisplayPostInfo(title, content, author_username, author_profile_picture if author_profile_picture != None else 'static/img/no_profile_picture.jpg'))
+        postInfos.append(DisplayPostInfo(id, title, content, author_username, author_profile_picture if author_profile_picture != None else 'static/img/no_profile_picture.jpg'))
     
     username = ''
     profile_picture = ''
@@ -89,8 +90,11 @@ def post():
     profile_picture = ''
     if 'token' in request.cookies.keys():
         username, profile_picture = database.execute('select username, profile_picture from accounts where id=?', [active_tokens[request.cookies['token']]]).fetchone()
-        
-    return render_template('post.html', username=username, profile_picture=profile_picture)
+
+    id, author_id, title, content = database.execute('select * from posts where id=?', [request.args['post']]).fetchone()
+    author_username, author_profile_picture = database.execute('select username, profile_picture from accounts where id=?', [author_id]).fetchone()
+
+    return render_template('post.html', username=username, profile_picture=profile_picture, post=DisplayPostInfo(id, title, content, author_username, author_profile_picture if author_profile_picture != None else 'static/img/no_profile_picture.jpg'))
 
 @app.route('/tos')
 def tos():

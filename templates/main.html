@@ -12,23 +12,9 @@
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
         <link href="{{ url_for('static', filename='css/core.css') }}" rel="stylesheet"/>
+        <link href="{{ url_for('static', filename='css/post.css') }}" rel="stylesheet"/>
 
         <style>
-            .content
-            {
-                padding: 16px;
-            }
-
-            .post
-            {
-                margin-top: 16px;
-                background-color: var(--content-color);
-                border-radius: 10px;
-                box-shadow: -0.1em -0.3em 0.5em var(--element-color) inset;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
             #new_post_collapse_control
             {
                 width: 40px;
@@ -89,7 +75,7 @@
                             <span class="text-center d-block w-100 fw-bold">{{ post.author }}</span>
                         </div>
                         <div class="post_content col ps-4">
-                            <h3>{{ post.title }}</h3>
+                            <a class="hidden-link" href="{{ url_for('post', post=post.id)}}"><h3>{{ post.title }}</h3></a>
                             {{ post.content }}
                         </div>
                     </div>

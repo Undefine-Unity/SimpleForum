@@ -1,0 +1,14 @@
+.post
+{
+    margin-top: 16px;
+    background-color: var(--content-color);
+    border-radius: 10px;
+    box-shadow: -0.1em -0.3em 0.5em var(--element-color) inset;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.content
+{
+    padding: 16px;
+}
