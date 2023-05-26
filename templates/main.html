@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title>Main</title>
 
@@ -13,26 +14,6 @@
         <link href="{{ url_for('static', filename='css/core.css') }}" rel="stylesheet"/>
 
         <style>
-            #navbar
-            {
-                width: 100%;
-                background-color: var(--content-color);
-            }
-
-            #navbar::after
-            {
-                content: "";
-                clear: both;
-                display: table;
-            }
-
-            #navbar *
-            {
-                text-align: center;
-                padding: 14px;
-                margin-bottom: 0px;
-            }
-
             .content
             {
                 padding: 16px;
@@ -72,57 +53,7 @@
     </head>
 
     <body class="m-0" onload="setup_bootstrap_events()">
-        <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-            <div class="container-fluid">
-                <a class="navbar-brand hidden-link" href="#">name goes here</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                {% if username == '' %}
-                    <a href="/login" class="d-flex btn btn-primary hidden-link">Login</a>
-                {% else %}
-                    <div class="d-flex nav-item dropdown" data-bs-theme="dark">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {{ username }}
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
-                            <li class="dropdown-item">
-                                <a type="button" class="hidden-link" data-bs-toggle="modal" data-bs-target="#profilePictureModal" aria-expanded="false">
-                                    Change profile picture
-                                </a>
-                            </li>
-                            <li class="dropdown-item">
-                                <a class="hidden-link" href="/logout">Log out</a>
-                            </li>
-                        </ul>
-                    </div>
-                {% endif %}
-            </div>
-        </nav>
-
-        <div class="modal fade" id="profilePictureModal" tabindex="-1" aria-labelledby="profilePictureModal" aria-hidden="true" data-bs-theme="dark">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="profilePictureModal">Change profile picture</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="/api/change_profile_picture" method="post" enctype="multipart/form-data" class="mb-1" id="changeProfilePictureForm">
-                            <div class="mb-3">
-                                <label for="profilePictureUpload" class="form-label">Choose new profile picture</label>
-                                <input class="form-control" type="file" accept="image/png, image/gif, image/jpeg, image/webp" id="profilePictureUpload" name="profile_picture">
-                            </div>                              
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <input type="submit" class="btn btn-primary btn-primary-fixed-size" value="Save" form="changeProfilePictureForm" data-bs-dismiss="modal"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-          
+        {% include "topbar.html" %}
 
         <div id="content">
             <div class="container">
@@ -153,7 +84,7 @@
                 {% for post in posts %}
                     <div class="post p-4 row">
                         <div class="post_profile_picture col-md-auto border-end pe-4">
-                            <img width=83 height=91 src="{{ post.author_profile_picture }}" class="pb-2"/>
+                            <img width=83 height=91 src="{{ post.author_profile_picture }}" class="pb-2 rounded-circle"/>
                             <br/>
                             <span class="text-center d-block w-100 fw-bold">{{ post.author }}</span>
                         </div>

@@ -3,6 +3,7 @@ from werkzeug.utils import secure_filename
 
 from dataclasses import dataclass
 import datetime
+import hashlib
 import json
 import os
 import random
@@ -35,7 +36,7 @@ def login(username_in: str, password_in: str) -> Response:
 
     id, username, password, email, profile_picture = accountTuple
 
-    if password_in != password:
+    if hashlib.sha256(password_in.encode('utf-8')).hexdigest() != password:
         return redirect(url_for('login_endpoint', error='Invalid password'))
         
     if id in active_tokens.values():
@@ -81,6 +82,15 @@ def main():
         username, profile_picture = database.execute('select username, profile_picture from accounts where id=?', [active_tokens[request.cookies['token']]]).fetchone()
         
     return render_template('main.html', posts=postInfos, username=username, profile_picture=profile_picture)
+
+@app.route('/post')
+def post():
+    username = ''
+    profile_picture = ''
+    if 'token' in request.cookies.keys():
+        username, profile_picture = database.execute('select username, profile_picture from accounts where id=?', [active_tokens[request.cookies['token']]]).fetchone()
+        
+    return render_template('post.html', username=username, profile_picture=profile_picture)
 
 @app.route('/tos')
 def tos():
@@ -138,14 +148,22 @@ def api_register():
     })
     if r.status_code != 200 or not r.json()['success']:
         return redirect(url_for('register', error='Verify you are not a robot', username_old=request.form['username'], email_old=request.form['email']))
-    
-    database.execute('insert into accounts (username, password, email) values (?, ?, ?)', [request.form['username'], request.form['password'], request.form['email']])
+
+    database.execute('insert into accounts (username, password, email) values (?, ?, ?)', [request.form['username'], hashlib.sha256(request.form['password'].encode('utf-8')).hexdigest(), request.form['email']])
     database.commit()
 
     return login(request.form['username'], request.form['password'])
 
 @app.route('/api/change_profile_picture', methods=['POST'])
 def api_change_profile_picture():
+    # Check if token is still valid
+    if 'token' in request.cookies.keys() and not request.cookies['token'] in active_tokens:
+        return logout(request.cookies['token'])
+    
+    profile_picture = database.execute('select profile_picture from accounts where id=?', [active_tokens[request.cookies['token']]]).fetchone()
+    if profile_picture != None:
+        os.remove(os.path.join(PROFILE_PICTURE_DIRECTORY, profile_picture))
+
     uploadedImage = request.files['profile_picture']
     imageFilename = os.path.join(PROFILE_PICTURE_DIRECTORY, secure_filename(uploadedImage.filename))
     uploadedImage.save(imageFilename)

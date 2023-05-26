@@ -1,22 +1,25 @@
-<!--<div id="navbar" class="sticky-top">
-    <div class="float-start d-flex align-items-center">
-        <h2><a href="/" class="p-0 hidden-link">forum logo goes here</a></h2>
-    </div>
-    <div class="float-end d-flex align-items-center fs-5">
-        {% if username == '' %}
-            <a href="/login" class="btn btn-primary hidden-link">Login</a>
-        {% else %}
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <b class="d-inline">{{ username }}</b>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item" href="/logout">Log out</a></li>
-                </ul>
-            </div>
-        {% endif %}
-    </div>
-</div>-->
+<style>
+    #navbar
+    {
+        width: 100%;
+        background-color: var(--content-color);
+    }
+
+    #navbar::after
+    {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    #navbar *
+    {
+        text-align: center;
+        padding: 14px;
+        margin-bottom: 0px;
+    }
+</style>
+
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand hidden-link" href="#">name goes here</a>
@@ -26,16 +29,45 @@
         {% if username == '' %}
             <a href="/login" class="d-flex btn btn-primary hidden-link">Login</a>
         {% else %}
-            <div class="d-flex nav-item dropdown">
+            <div class="d-flex nav-item dropdown" data-bs-theme="dark">
                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img width=20 height=20 src="{{ profile_picture }}" class="m-1 rounded-circle"/>
                     {{ username }}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
-                    <li><a class="dropdown-item" href="/logout">Log out</a></li>
+                    <li class="dropdown-item">
+                        <a type="button" class="hidden-link" data-bs-toggle="modal" data-bs-target="#profilePictureModal" aria-expanded="false">
+                            Change profile picture
+                        </a>
+                    </li>
+                    <li class="dropdown-item">
+                        <a class="hidden-link" href="/logout">Log out</a>
+                    </li>
                 </ul>
             </div>
         {% endif %}
     </div>
 </nav>
 
-
+<div class="modal fade" id="profilePictureModal" tabindex="-1" aria-labelledby="profilePictureModal" aria-hidden="true" data-bs-theme="dark">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="profilePictureModal">Change profile picture</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/api/change_profile_picture" method="post" enctype="multipart/form-data" class="mb-1" id="changeProfilePictureForm">
+                    <div class="mb-3">
+                        <label for="profilePictureUpload" class="form-label">Choose new profile picture</label>
+                        <input class="form-control" type="file" accept="image/png, image/gif, image/jpeg, image/webp" id="profilePictureUpload" name="profile_picture">
+                    </div>                              
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <input type="submit" class="btn btn-primary btn-primary-fixed-size" value="Save" form="changeProfilePictureForm" data-bs-dismiss="modal"/>
+            </div>
+        </div>
+    </div>
+</div>
